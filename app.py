@@ -89,7 +89,7 @@ def get_worksheet():
         ],
     )
     client = gspread.authorize(creds)
-    spreadsheet_id = st.secrets.get("15O5-CM5uUD3TaVRVYCEp5Q836YzARlj0cmLs6V90LT0")
+    spreadsheet_id = st.secrets.get("google_sheet_id")
     if not spreadsheet_id:
         raise RuntimeError("Add google_sheet_id to Streamlit secrets.")
     spreadsheet = client.open_by_key(spreadsheet_id)
