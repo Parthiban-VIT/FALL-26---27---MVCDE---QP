@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BAMAT101 · FAT Question Submission</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+
+<!-- MathJax (renders $...$, $$...$$, \(...\), \[...\]) -->
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+
+<style>
+  :root {
+    --paper: #eef1f6;
+    --card: #ffffff;
+    --ink: #16213a;
+    --muted: #5a6479;
+    --line: #d5dbe6;
+    --accent: #264aa0;
+    --accent-ink: #ffffff;
+    --easy: #1f7a5a;   --easy-bg: #e1f2ea;
+    --medium: #8a5a00; --medium-bg: #fbefd0;
+    --hard: #9b2335;   --hard-bg: #f8dfe3;
+    --danger: #9b2335;
+    --ok: #1f7a5a;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.55;
+  }
+  header.top {
+    background: var(--ink); color: #fff; padding: 28px 24px 26px;
+  }
+  header.top .wrap { max-width: 1180px; margin: 0 auto; }
+  header.top h1 {
+    font-family: var(--serif); font-weight: 600; font-size: clamp(1.4rem, 2.6vw, 2rem);
+    margin: 0 0 4px; letter-spacing: .1px;
+  }
+  header.top p { margin: 0; color: #c3cde3; max-width: 70ch; }
+
+  .shell {
+    max-width: 1180px; margin: 0 auto; padding: 24px;
+    display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 24px; align-items: start;
+  }
+  @media (max-width: 880px) { .shell { grid-template-columns: 1fr; padding: 16px; } }
+
+  aside.panel {
+    position: sticky; top: 16px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px;
+  }
+  @media (max-width: 880px) { aside.panel { position: static; } }
+  aside.panel h2 { font-family: var(--serif); font-size: 1.15rem; margin: 0 0 14px; }
+
+  label.lbl { display: block; font-size: .85rem; font-weight: 500; color: var(--muted); margin: 0 0 5px; }
+  select, input[type=text], textarea {
+    width: 100%; font: inherit; color: var(--ink); background: #fff;
+    border: 1px solid #b9c2d3; border-radius: 6px; padding: 9px 11px;
+  }
+  textarea { resize: vertical; line-height: 1.5; }
+  input[disabled] { background: #f3f5f9; color: #3a4560; border-color: var(--line); }
+  select:focus, input:focus, textarea:focus, button:focus-visible {
+    outline: 3px solid rgba(38, 74, 160, .35); outline-offset: 1px; border-color: var(--accent);
+  }
+  .field { margin-bottom: 14px; }
+
+  .details { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .details[hidden] { display: none; }
+  .details .module { font-family: var(--serif); font-weight: 600; font-size: 1.05rem; margin: 0 0 6px; }
+  .details .topics { margin: 0; color: #2b3652; font-size: .95rem; }
+  .details h3 { font-size: .85rem; font-weight: 500; color: var(--muted); margin: 14px 0 4px; }
+
+  .empty {
+    background: var(--card); border: 1px dashed #aab4c8; border-radius: 10px;
+    padding: 40px 28px; color: var(--muted); text-align: center;
+  }
+  .empty strong { display: block; font-family: var(--serif); color: var(--ink); font-size: 1.2rem; margin-bottom: 6px; }
+
+  .qcard {
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 22px; margin-bottom: 20px;
+  }
+  .qhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .qhead h3 { font-family: var(--serif); font-size: 1.25rem; margin: 0; }
+  .chip { font-size: .8rem; font-weight: 600; padding: 3px 11px; border-radius: 999px; }
+  .chip.Easy { color: var(--easy); background: var(--easy-bg); }
+  .chip.Medium { color: var(--medium); background: var(--medium-bg); }
+  .chip.Hard { color: var(--hard); background: var(--hard-bg); }
+
+  .row { display: grid; grid-template-columns: 260px 1fr; gap: 14px; }
+  @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+  .hint { font-size: .82rem; color: var(--muted); margin: 5px 0 0; }
+  .hint code { background: #eef1f6; padding: 1px 5px; border-radius: 4px; font-size: .95em; }
+
+  .preview-wrap { margin-top: 2px; }
+  .preview {
+    min-height: 64px; padding: 12px 14px; background: #f7f9fc; border: 1px solid var(--line);
+    border-left: 4px solid var(--accent); border-radius: 6px;
+    font-family: var(--serif); font-size: 1.05rem; line-height: 1.7;
+    white-space: pre-wrap; overflow-wrap: anywhere; overflow-x: auto;
+  }
+  .preview:empty::before { content: attr(data-ph); color: #8792a8; font-family: var(--sans); font-size: .92rem; }
+  .preview mjx-container { white-space: normal; }
+
+  .invalid { border-color: var(--danger) !important; background: #fff8f9; }
+
+  .actions { position: sticky; bottom: 0; background: linear-gradient(to top, var(--paper) 70%, rgba(238,241,246,0)); padding: 16px 0 6px; }
+  button.primary {
+    width: 100%; font: inherit; font-weight: 600; font-size: 1.02rem; cursor: pointer;
+    background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px; padding: 14px 18px;
+  }
+  button.primary:hover:not(:disabled) { background: #1d3b82; }
+  button.primary:disabled { opacity: .6; cursor: not-allowed; }
+
+  .msg { border-radius: 8px; padding: 12px 14px; margin: 0 0 14px; font-size: .95rem; }
+  .msg[hidden] { display: none; }
+  .msg.err { background: #fbe9ec; color: #7d1b2b; border: 1px solid #efbac2; }
+  .msg.ok { background: #e1f2ea; color: #14573f; border: 1px solid #a9d8c4; }
+  .msg.warn { background: #fbefd0; color: #6d4700; border: 1px solid #ecd48f; }
+
+  .draft-note { font-size: .82rem; color: var(--muted); margin: 0 0 14px; }
+  .done-panel { text-align: center; padding: 36px 24px; }
+  .done-panel h2 { font-family: var(--serif); margin: 0 0 6px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <h1> FALL 26 - 27</h1>
+    <h1>BAMAT101 · Multivariable Calculus and Differential Equations</h1>
+    <h1>B1 Slot Question Submission Form</h1>
+    <p>Choose your name to see your module, topics and difficulty levels, then enter three questions with Bloom's level and rubrics.</p>
+  </div>
+</header>
+
+<main class="shell">
+  <aside class="panel" aria-label="Faculty details">
+    <h2>Faculty details</h2>
+    <div class="field">
+      <label class="lbl" for="facultySelect">Select your name</label>
+      <select id="facultySelect"></select>
+    </div>
+    <div class="details" id="details" hidden>
+      <div class="field">
+        <label class="lbl" for="empId">Employee ID</label>
+        <input type="text" id="empId" disabled>
+      </div>
+      <p class="module" id="moduleName"></p>
+      <h3>Assigned topics</h3>
+      <p class="topics" id="topics"></p>
+    </div>
+  </aside>
+
+  <section aria-live="polite">
+    <div class="empty" id="emptyState">
+      <strong>Select your name to begin</strong>
+      Your assigned topics and the difficulty of each question will appear here.
+    </div>
+
+    <form id="qForm" hidden novalidate>
+      <p class="draft-note">Your entries are saved on this device while you type, so you can close the page and come back.</p>
+      <div id="questions"></div>
+      <div id="errBox" class="msg err" role="alert" hidden></div>
+      <div class="actions">
+        <button type="submit" class="primary" id="submitBtn">Submit all 3 questions</button>
+      </div>
+    </form>
+
+    <div class="qcard done-panel" id="donePanel" hidden>
+      <h2>Questions submitted</h2>
+      <p id="doneText">Your three questions have been saved. You can close this page.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ============================================================
+   CONFIGURATION: paste your deployed Google Apps Script
+   Web App URL here (ends with /exec). See README steps.
+   ============================================================ */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjS5vlDiLqMrdtD-X-qO4qprcvCIvdAZDGWZLpkt2ZsNA4Gcpf1V_yE9COqUkFsmaIdQ/exec";
+
+const FACULTY = {
+  "P MOHAN": {
+    emp_id: "54788", module: "Module – 1",
+    topics: "Functions of two variables; partial derivatives; total differential; Jacobian and its properties; Taylor’s expansion for two variables",
+    difficulty: ["Easy", "Medium", "Medium"]
+  },
+  "DEVI YAMINI S": {
+    emp_id: "51016", module: "Module – 1",
+    topics: "Maxima and minima; constrained maxima and minima; Lagrange’s multiplier method",
+    difficulty: ["Medium", "Easy", "Hard"]
+  },
+  "SAGITHYA T": {
+    emp_id: "53117", module: "Module – 2",
+    topics: "Evaluation of double integrals; change of order of integration; change of variables between Cartesian and polar coordinates",
+    difficulty: ["Easy", "Easy", "Medium"]
+  },
+  "SAURABH CHANDRA MAURY": {
+    emp_id: "52253", module: "Module – 2",
+    topics: "Evaluation of triple integrals; change of variables between Cartesian, cylindrical, and spherical coordinates",
+    difficulty: ["Hard", "Hard", "Easy"]
+  },
+  "OM NAMHA SHIVAY": {
+    emp_id: "52271", module: "Module – 3",
+    topics: "Scalar and vector-valued functions; gradient; directional derivative; divergence; curl; scalar and vector potentials",
+    difficulty: ["Medium", "Easy", "Easy"]
+  },
+  "FATHIMA SAFIKAA S N": {
+    emp_id: "54965", module: "Module – 3",
+    topics: "Line, surface, and volume integrals; statements of Green’s, Stokes’, and Gauss’s divergence theorems",
+    difficulty: ["Medium", "Medium", "Medium"]
+  },
+  "ARNAB KAYAL": {
+    emp_id: "54766", module: "Module – 3",
+    topics: "Verification and evaluation of vector integrals using Green’s, Stokes’, and Gauss’s theorems",
+    difficulty: ["Hard", "Hard", "Hard"]
+  },
+  "ABHISHEK KUMAR SINGH": {
+    emp_id: "50611", module: "Module – 4",
+    topics: "Linear second-order ordinary differential equations with constant coefficients; method of undetermined coefficients; variation of parameters",
+    difficulty: ["Medium", "Medium", "Easy"]
+  },
+  "KOMAL KUMAR": {
+    emp_id: "54779", module: "Module – 4",
+    topics: "Solutions of Cauchy–Euler and Cauchy–Legendre differential equations",
+    difficulty: ["Medium", "Medium", "Medium"]
+  },
+  "LAKSHMANAN S": {
+    emp_id: "52269", module: "Module – 4",
+    topics: "Applications of linear second-order differential equations",
+    difficulty: ["Easy", "Hard", "Hard"]
+  },
+  "SRUTHA KEERTHI B": {
+    emp_id: "50431", module: "Module – 5",
+    topics: "Formation of PDE; first-order PDEs of the forms F(p,q)=0, F(z,p,q)=0, F(x,p)=G(y,q), and Clairaut’s form",
+    difficulty: ["Hard", "Medium", "Medium"]
+  },
+  "SOUMENDU ROY": {
+    emp_id: "52803", module: "Module – 5",
+    topics: "Lagrange’s equation Pp + Qq = R; solution of a linear first-order PDE by separation of variables",
+    difficulty: ["Easy", "Easy", "Easy"]
+  }
+};
+
+const BT_LEVELS = [
+  "BT1 - Remember", "BT2 - Understand", "BT3 - Apply",
+  "BT4 - Analyze", "BT5 - Evaluate", "BT6 - Create"
+];
+
+const $ = (id) => document.getElementById(id);
+let current = null;          // currently selected faculty name
+const timers = {};
+
+/* ---------- Faculty selector ---------- */
+(function initSelect() {
+  const sel = $("facultySelect");
+  sel.add(new Option("— Select faculty —", ""));
+  Object.keys(FACULTY).sort().forEach(n => sel.add(new Option(n, n)));
+  sel.addEventListener("change", () => selectFaculty(sel.value));
+})();
+
+function selectFaculty(name) {
+  hideError();
+  $("donePanel").hidden = true;
+  if (!name) {
+    current = null;
+    $("details").hidden = true;
+    $("qForm").hidden = true;
+    $("emptyState").hidden = false;
+    return;
+  }
+  current = name;
+  const f = FACULTY[name];
+  $("empId").value = f.emp_id;
+  $("moduleName").textContent = f.module;
+  $("topics").textContent = f.topics;
+  $("details").hidden = false;
+  $("emptyState").hidden = true;
+  buildQuestions(f);
+  loadDraft();
+  refreshAllPreviews();
+  $("qForm").hidden = false;
+  $("submitBtn").disabled = false;
+}
+
+/* ---------- Question cards ---------- */
+function buildQuestions(f) {
+  const box = $("questions");
+  box.innerHTML = "";
+  for (let i = 0; i < 3; i++) {
+    const diff = f.difficulty[i];
+    const card = document.createElement("div");
+    card.className = "qcard";
+    card.innerHTML = String.raw`
+      <div class="qhead">
+        <h3>Question ${i + 1}</h3>
+        <span class="chip ${diff}" title="Assigned difficulty">${diff}</span>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label class="lbl" for="bt${i}">Bloom’s Taxonomy level</label>
+          <select id="bt${i}">${BT_LEVELS.map(b => `<option>${b}</option>`).join("")}</select>
+        </div>
+        <div class="field">
+          <label class="lbl" for="diff${i}">Assigned difficulty</label>
+          <input type="text" id="diff${i}" value="${diff}" disabled>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl" for="q${i}">Question (enter LaTeX where needed)</label>
+        <textarea id="q${i}" rows="5" placeholder="Example: Find $\frac{\partial z}{\partial x}$ for $z=x^2y+xy^2$."></textarea>
+        <p class="hint">Use <code>$...$</code> for inline maths and <code>$$...$$</code> or <code>\[...\]</code> for display maths.</p>
+      </div>
+      <div class="field preview-wrap">
+        <label class="lbl">Preview</label>
+        <div class="preview" id="pv${i}" data-ph="Your rendered question will appear here."></div>
+      </div>
+      <div class="field">
+        <label class="lbl" for="r${i}">Rubrics (include expected steps and marks)</label>
+        <textarea id="r${i}" rows="4" placeholder="Example: Correct method (2 marks); working (2 marks); final answer (1 mark)."></textarea>
+      </div>`;
+    box.appendChild(card);
+
+    $("q" + i).addEventListener("input", () => { $("q" + i).classList.remove("invalid"); schedulePreview(i); saveDraft(); });
+    $("r" + i).addEventListener("input", () => { $("r" + i).classList.remove("invalid"); saveDraft(); });
+    $("bt" + i).addEventListener("change", saveDraft);
+  }
+}
+
+/* ---------- MathJax preview ---------- */
+function schedulePreview(i) {
+  clearTimeout(timers[i]);
+  timers[i] = setTimeout(() => updatePreview(i), 250);
+}
+function updatePreview(i) {
+  const src = $("q" + i).value;
+  const box = $("pv" + i);
+  if (window.MathJax && MathJax.typesetClear) MathJax.typesetClear([box]);
+  box.textContent = src.trim() ? src : "";
+  if (src.trim() && window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([box]).catch(() => {});
+  }
+}
+function refreshAllPreviews() { for (let i = 0; i < 3; i++) updatePreview(i); }
+// Re-render once MathJax has finished loading
+window.addEventListener("load", () => {
+  if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+    MathJax.startup.promise.then(refreshAllPreviews);
+  }
+});
+
+/* ---------- Drafts (localStorage) ---------- */
+function draftKey() { return current ? "fat_draft_" + FACULTY[current].emp_id : null; }
+function saveDraft() {
+  const key = draftKey(); if (!key) return;
+  const d = [0, 1, 2].map(i => ({ bt: $("bt" + i).value, q: $("q" + i).value, r: $("r" + i).value }));
+  try { localStorage.setItem(key, JSON.stringify(d)); } catch (e) {}
+}
+function loadDraft() {
+  const key = draftKey(); if (!key) return;
+  try {
+    const d = JSON.parse(localStorage.getItem(key) || "null");
+    if (!Array.isArray(d)) return;
+    d.forEach((x, i) => {
+      if (!x || !$("q" + i)) return;
+      $("bt" + i).value = BT_LEVELS.includes(x.bt) ? x.bt : BT_LEVELS[0];
+      $("q" + i).value = x.q || "";
+      $("r" + i).value = x.r || "";
+    });
+  } catch (e) {}
+}
+function clearDraft() { const k = draftKey(); if (k) { try { localStorage.removeItem(k); } catch (e) {} } }
+
+/* ---------- Errors ---------- */
+function showError(text) { const b = $("errBox"); b.textContent = text; b.hidden = false; b.scrollIntoView({ block: "center" }); }
+function hideError() { $("errBox").hidden = true; }
+
+/* ---------- Submit ---------- */
+$("qForm").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  hideError();
+  if (!current) return;
+  const f = FACULTY[current];
+
+  const entries = [];
+  const missing = [];
+  for (let i = 0; i < 3; i++) {
+    const q = $("q" + i).value.trim();
+    const r = $("r" + i).value.trim();
+    $("q" + i).classList.toggle("invalid", !q);
+    $("r" + i).classList.toggle("invalid", !r);
+    if (!q) missing.push(`Question ${i + 1}`);
+    if (!r) missing.push(`Rubrics for Question ${i + 1}`);
+    entries.push({ number: i + 1, difficulty: f.difficulty[i], bt: $("bt" + i).value, question: q, rubrics: r });
+  }
+  if (missing.length) {
+    showError("Please complete all required fields: " + missing.join(", ") + ".");
+    return;
+  }
+  if (!SCRIPT_URL || SCRIPT_URL.startsWith("PASTE_")) {
+    showError("This form is not connected to Google Sheets yet. Set SCRIPT_URL in index.html to your Apps Script Web App URL.");
+    return;
+  }
+
+  const btn = $("submitBtn");
+  btn.disabled = true; btn.textContent = "Submit";
+
+  const payload = {
+    emp_id: f.emp_id, faculty: current, module: f.module, topics: f.topics, entries
+  };
+
+  try {
+    // text/plain avoids a CORS preflight, which Apps Script does not handle
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.error || "The server rejected the submission.");
+
+    clearDraft();
+    $("qForm").hidden = true;
+    $("donePanel").hidden = false;
+    $("doneText").textContent = `Your three questions for ${f.module} have been saved, ${current}. You can close this page.`;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (err) {
+    showError("Your questions could not be saved to Google Sheets. Your entries are still on this page. Check your internet connection and try again, or contact the coordinator. Details: " + err.message);
+    btn.disabled = false; btn.textContent = "Submit all 3 questions";
+  }
+});
+</script>
+</body>
+</html>
